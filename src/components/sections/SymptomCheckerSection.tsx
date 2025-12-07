@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { 
-  Thermometer, 
-  HeartPulse, 
-  Brain, 
-  Bone, 
-  Eye, 
+import {
+  Thermometer,
+  HeartPulse,
+  Brain,
+  Bone,
+  Eye,
   Wind,
   AlertCircle,
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
+  Info,
+  List
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DetailDialog } from "@/components/DetailDialog";
+import { SymptomsModal } from "@/components/modals/SymptomsModal";
 
 const symptoms = [
   { icon: Thermometer, label: "Fever", color: "text-destructive" },
@@ -24,13 +28,31 @@ const symptoms = [
 
 export const SymptomCheckerSection = () => {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [symptomsModalOpen, setSymptomsModalOpen] = useState(false);
+  const [dialogType, setDialogType] = useState<'how-it-works' | 'all-symptoms' | null>(null);
 
   const toggleSymptom = (label: string) => {
-    setSelectedSymptoms(prev => 
-      prev.includes(label) 
+    setSelectedSymptoms(prev =>
+      prev.includes(label)
         ? prev.filter(s => s !== label)
         : [...prev, label]
     );
+  };
+
+  const handleStartAssessment = () => {
+    setSymptomsModalOpen(true);
+  };
+
+  const handleHowItWorks = () => {
+    setDialogType('how-it-works');
+  };
+
+  const handleViewAllSymptoms = () => {
+    setDialogType('all-symptoms');
+  };
+
+  const closeDialog = () => {
+    setDialogType(null);
   };
 
   return (
@@ -130,11 +152,12 @@ export const SymptomCheckerSection = () => {
               )}
 
               {/* CTA */}
-              <Button 
-                variant="hero" 
-                size="lg" 
+              <Button
+                variant="hero"
+                size="lg"
                 className="w-full"
                 disabled={selectedSymptoms.length === 0}
+                onClick={handleStartAssessment}
               >
                 Start Assessment
                 <ArrowRight className="h-5 w-5" />
@@ -142,11 +165,17 @@ export const SymptomCheckerSection = () => {
 
               {/* Quick links */}
               <div className="flex items-center justify-center gap-4 mt-6 text-sm">
-                <button className="text-muted-foreground hover:text-primary transition-colors">
+                <button
+                  onClick={handleHowItWorks}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   How it works
                 </button>
                 <span className="text-border">•</span>
-                <button className="text-muted-foreground hover:text-primary transition-colors">
+                <button
+                  onClick={handleViewAllSymptoms}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   View all symptoms
                 </button>
               </div>
@@ -154,6 +183,98 @@ export const SymptomCheckerSection = () => {
           </div>
         </div>
       </div>
+
+      {/* Symptom Checker Dialog */}
+      {dialogType && (
+        <DetailDialog
+          isOpen={!!dialogType}
+          onClose={closeDialog}
+          title={
+            dialogType === 'how-it-works' ? 'How Our Symptom Checker Works' :
+            'All Available Symptoms'
+          }
+          description={
+            dialogType === 'how-it-works' ? 'Learn about our AI-powered process' :
+            'Browse all symptoms we can help with'
+          }
+          actions={
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={closeDialog}>
+                Close
+              </Button>
+            </div>
+          }
+        >
+          <div className="space-y-6">
+            {dialogType === 'how-it-works' && (
+              <>
+                {/* How It Works */}
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center space-y-2">
+                      <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                        <span className="text-primary font-bold">1</span>
+                      </div>
+                      <h5 className="font-semibold">Select Symptoms</h5>
+                      <p className="text-sm text-muted-foreground">
+                        Choose all symptoms you're experiencing
+                      </p>
+                    </div>
+                    <div className="text-center space-y-2">
+                      <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                        <span className="text-primary font-bold">2</span>
+                      </div>
+                      <h5 className="font-semibold">AI Analysis</h5>
+                      <p className="text-sm text-muted-foreground">
+                        Our AI analyzes patterns and provides insights
+                      </p>
+                    </div>
+                    <div className="text-center space-y-2">
+                      <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                        <span className="text-primary font-bold">3</span>
+                      </div>
+                      <h5 className="font-semibold">Get Results</h5>
+                      <p className="text-sm text-muted-foreground">
+                        Receive personalized recommendations
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {dialogType === 'all-symptoms' && (
+              <>
+                {/* All Symptoms */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-foreground">Common Symptoms We Check</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {[
+                      "Fever", "Headache", "Chest Pain", "Joint Pain", "Vision Issues", "Breathing Problems",
+                      "Nausea", "Fatigue", "Dizziness", "Cough", "Sore Throat", "Skin Rash",
+                      "Abdominal Pain", "Back Pain", "Muscle Pain", "Swelling", "Weight Loss", "Insomnia"
+                    ].map((symptom) => (
+                      <div key={symptom} className="flex items-center gap-2 p-2 bg-muted/50 rounded">
+                        <span className="text-sm">{symptom}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    This is just a sample. Our system covers hundreds of symptoms across all medical categories.
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+        </DetailDialog>
+      )}
+
+      {/* Symptoms Modal */}
+      <SymptomsModal
+        isOpen={symptomsModalOpen}
+        onClose={() => setSymptomsModalOpen(false)}
+        preselectedSymptoms={selectedSymptoms}
+      />
     </section>
   );
 };

@@ -1,14 +1,24 @@
-import { 
-  Video, 
-  MessageCircle, 
-  Heart, 
-  Calendar, 
-  FileText, 
+import { useState } from "react";
+import {
+  Video,
+  MessageCircle,
+  Heart,
+  Calendar,
+  FileText,
   Apple,
   Stethoscope,
-  Shield
+  Shield,
+  CheckCircle,
+  Clock,
+  Users,
+  Star
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DetailDialog } from "@/components/DetailDialog";
+import { Button } from "@/components/ui/button";
+import { BookingModal } from "@/components/modals/BookingModal";
+import { SymptomsModal } from "@/components/modals/SymptomsModal";
+import { TelehealthModal } from "@/components/modals/TelehealthModal";
 
 const services = [
   {
@@ -80,6 +90,37 @@ const colorClasses = {
 };
 
 export const ServicesSection = () => {
+  const [selectedService, setSelectedService] = useState<typeof services[0] | null>(null);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [symptomsModalOpen, setSymptomsModalOpen] = useState(false);
+  const [telehealthModalOpen, setTelehealthModalOpen] = useState(false);
+
+  const handleServiceClick = (service: typeof services[0]) => {
+    setSelectedService(service);
+  };
+
+  const handleGetStarted = (service: typeof services[0]) => {
+    setSelectedService(null); // Close detail dialog
+    switch (service.title) {
+      case "Telehealth Consults":
+        setTelehealthModalOpen(true);
+        break;
+      case "AI Symptom Checker":
+        setSymptomsModalOpen(true);
+        break;
+      case "Easy Booking":
+        setBookingModalOpen(true);
+        break;
+      default:
+        // For other services, keep the detail dialog for now
+        break;
+    }
+  };
+
+  const closeDialog = () => {
+    setSelectedService(null);
+  };
+
   return (
     <section id="services" className="py-20 md:py-32 bg-card">
       <div className="container mx-auto px-4">
@@ -105,6 +146,7 @@ export const ServicesSection = () => {
             return (
               <div
                 key={service.title}
+                onClick={() => handleServiceClick(service)}
                 className={cn(
                   "group relative bg-background rounded-2xl p-6 border border-border/50",
                   "hover:shadow-lg hover:border-primary/20 transition-all duration-300",
@@ -155,6 +197,106 @@ export const ServicesSection = () => {
           </a>
         </div>
       </div>
+
+      {/* Service Detail Dialog */}
+      {selectedService && (
+        <DetailDialog
+          isOpen={!!selectedService}
+          onClose={closeDialog}
+          title={selectedService.title}
+          description="Learn more about this service"
+          actions={
+            <Button onClick={closeDialog} variant="outline">
+              Close
+            </Button>
+          }
+        >
+          <div className="space-y-6">
+            {/* Service Icon */}
+            <div className="flex items-center gap-4">
+              <div className={cn(
+                "w-16 h-16 rounded-xl flex items-center justify-center",
+                colorClasses[selectedService.color as keyof typeof colorClasses].bg
+              )}>
+                <selectedService.icon className={cn(
+                  "h-8 w-8",
+                  colorClasses[selectedService.color as keyof typeof colorClasses].text
+                )} />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-foreground">
+                  {selectedService.title}
+                </h3>
+                <p className="text-muted-foreground">
+                  {selectedService.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Service Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="font-semibold text-foreground">Key Features</h4>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-accent" />
+                    <span className="text-sm">24/7 availability</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-accent" />
+                    <span className="text-sm">Certified professionals</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-accent" />
+                    <span className="text-sm">Secure and private</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-semibold text-foreground">Benefits</h4>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2">
+                    <Star className="h-4 w-4 text-warning" />
+                    <span className="text-sm">Convenient access</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-primary" />
+                    <span className="text-sm">Expert care</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-accent" />
+                    <span className="text-sm">Time-saving</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="pt-4 border-t border-border">
+              <Button className="w-full" size="lg" onClick={() => handleGetStarted(selectedService)}>
+                Get Started with {selectedService.title}
+              </Button>
+            </div>
+          </div>
+        </DetailDialog>
+      )}
+
+      {/* Modals */}
+      <BookingModal
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+      />
+
+      <SymptomsModal
+        isOpen={symptomsModalOpen}
+        onClose={() => setSymptomsModalOpen(false)}
+      />
+
+      <TelehealthModal
+        isOpen={telehealthModalOpen}
+        onClose={() => setTelehealthModalOpen(false)}
+      />
     </section>
   );
 };

@@ -1,16 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { 
-  X, 
-  Send, 
-  Heart, 
-  Calendar, 
-  Stethoscope, 
+import {
+  X,
+  Send,
+  Heart,
+  Calendar,
+  Stethoscope,
   MessageCircle,
   Sparkles,
   Minimize2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BookingModal } from "@/components/modals/BookingModal";
+import { SymptomsModal } from "@/components/modals/SymptomsModal";
 
 interface Message {
   id: string;
@@ -46,6 +48,8 @@ export const BloomBot = () => {
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [symptomsModalOpen, setSymptomsModalOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -93,12 +97,19 @@ export const BloomBot = () => {
   };
 
   const handleQuickReply = (action: string) => {
-    const labels: Record<string, string> = {
-      book: "I want to book an appointment",
-      symptoms: "I need help with symptoms",
-      wellness: "Give me wellness tips",
-    };
-    handleSend(labels[action]);
+    switch (action) {
+      case "book":
+        setBookingModalOpen(true);
+        break;
+      case "symptoms":
+        setSymptomsModalOpen(true);
+        break;
+      case "wellness":
+        handleSend("Give me wellness tips");
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -262,6 +273,17 @@ export const BloomBot = () => {
           )}
         </div>
       )}
+
+      {/* Modals */}
+      <BookingModal
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+      />
+
+      <SymptomsModal
+        isOpen={symptomsModalOpen}
+        onClose={() => setSymptomsModalOpen(false)}
+      />
     </>
   );
 };

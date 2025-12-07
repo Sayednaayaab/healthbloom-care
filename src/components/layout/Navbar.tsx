@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart, Menu, X, Phone, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BookingModal } from "@/components/modals/BookingModal";
+import { PatientPortalModal } from "@/components/modals/PatientPortalModal";
 
 const navLinks = [
   { name: "Home", href: "#home" },
@@ -23,6 +25,8 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [patientPortalModalOpen, setPatientPortalModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -98,17 +102,17 @@ export const Navbar = () => {
 
         {/* Desktop CTA */}
         <div className="hidden lg:flex items-center gap-3">
-          <a 
-            href="tel:1-800-HEALTH" 
+          <a
+            href="tel:1-800-HEALTH"
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
           >
             <Phone className="h-4 w-4" />
             <span>1-800-HEALTH</span>
           </a>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => setPatientPortalModalOpen(true)}>
             Patient Portal
           </Button>
-          <Button variant="default" size="sm">
+          <Button variant="default" size="sm" onClick={() => setBookingModalOpen(true)}>
             Book Now
           </Button>
         </div>
@@ -153,16 +157,26 @@ export const Navbar = () => {
               </div>
             ))}
             <div className="pt-4 space-y-2">
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => { setPatientPortalModalOpen(true); setIsMobileMenuOpen(false); }}>
                 Patient Portal
               </Button>
-              <Button variant="default" className="w-full">
+              <Button variant="default" className="w-full" onClick={() => { setBookingModalOpen(true); setIsMobileMenuOpen(false); }}>
                 Book Now
               </Button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Modals */}
+      <BookingModal
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+      />
+      <PatientPortalModal
+        isOpen={patientPortalModalOpen}
+        onClose={() => setPatientPortalModalOpen(false)}
+      />
     </header>
   );
 };

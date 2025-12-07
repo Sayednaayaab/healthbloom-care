@@ -1,6 +1,10 @@
-import { Star, Calendar, Video } from "lucide-react";
+import { useState } from "react";
+import { Star, Calendar, Video, Clock, MapPin, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { DetailDialog } from "@/components/DetailDialog";
+import { BookingModal } from "@/components/modals/BookingModal";
+import { TelehealthModal } from "@/components/modals/TelehealthModal";
 
 const doctors = [
   {
@@ -42,6 +46,21 @@ const doctors = [
 ];
 
 export const DoctorsSection = () => {
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [telehealthModalOpen, setTelehealthModalOpen] = useState(false);
+  const [selectedDoctorForBooking, setSelectedDoctorForBooking] = useState<typeof doctors[0] | null>(null);
+  const [selectedDoctorForTelehealth, setSelectedDoctorForTelehealth] = useState<typeof doctors[0] | null>(null);
+
+  const handleBookClick = (doctor: typeof doctors[0]) => {
+    setSelectedDoctorForBooking(doctor);
+    setBookingModalOpen(true);
+  };
+
+  const handleVideoClick = (doctor: typeof doctors[0]) => {
+    setSelectedDoctorForTelehealth(doctor);
+    setTelehealthModalOpen(true);
+  };
+
   return (
     <section id="doctors" className="py-20 md:py-32 bg-background">
       <div className="container mx-auto px-4">
@@ -118,11 +137,21 @@ export const DoctorsSection = () => {
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  <Button variant="default" size="sm" className="flex-1">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleBookClick(doctor)}
+                  >
                     <Calendar className="h-4 w-4" />
                     Book
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleVideoClick(doctor)}
+                  >
                     <Video className="h-4 w-4" />
                     Video
                   </Button>
@@ -153,6 +182,20 @@ export const DoctorsSection = () => {
           ))}
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <BookingModal
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+        doctor={selectedDoctorForBooking}
+      />
+
+      {/* Telehealth Modal */}
+      <TelehealthModal
+        isOpen={telehealthModalOpen}
+        onClose={() => setTelehealthModalOpen(false)}
+        doctor={selectedDoctorForTelehealth}
+      />
     </section>
   );
 };

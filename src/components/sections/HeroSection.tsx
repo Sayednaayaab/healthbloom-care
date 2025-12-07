@@ -1,7 +1,15 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar, MessageCircle, Video, Sparkles } from "lucide-react";
+import { BookingModal } from "@/components/modals/BookingModal";
+import { SymptomsModal } from "@/components/modals/SymptomsModal";
+import { TelehealthModal } from "@/components/modals/TelehealthModal";
 
 export const HeroSection = () => {
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [symptomsModalOpen, setSymptomsModalOpen] = useState(false);
+  const [telehealthModalOpen, setTelehealthModalOpen] = useState(false);
+
   return (
     <section
       id="home"
@@ -53,15 +61,15 @@ export const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in-up delay-300">
-            <Button variant="hero" size="xl" className="w-full sm:w-auto group">
+            <Button variant="hero" size="xl" className="w-full sm:w-auto group" onClick={() => setBookingModalOpen(true)}>
               <Calendar className="h-5 w-5 transition-transform group-hover:-rotate-12" />
               Book Appointment
             </Button>
-            <Button variant="accent" size="xl" className="w-full sm:w-auto group">
+            <Button variant="accent" size="xl" className="w-full sm:w-auto group" onClick={() => setSymptomsModalOpen(true)}>
               <MessageCircle className="h-5 w-5 transition-transform group-hover:scale-110" />
               Symptom Checker
             </Button>
-            <Button variant="glass" size="xl" className="w-full sm:w-auto group">
+            <Button variant="glass" size="xl" className="w-full sm:w-auto group" onClick={() => setTelehealthModalOpen(true)}>
               <Video className="h-5 w-5 transition-transform group-hover:scale-110" />
               Telehealth Now
             </Button>
@@ -117,6 +125,20 @@ export const HeroSection = () => {
           />
         </svg>
       </div>
+
+      {/* Modals */}
+      <BookingModal
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+      />
+      <SymptomsModal
+        isOpen={symptomsModalOpen}
+        onClose={() => setSymptomsModalOpen(false)}
+      />
+      <TelehealthModal
+        isOpen={telehealthModalOpen}
+        onClose={() => setTelehealthModalOpen(false)}
+      />
     </section>
   );
 };
