@@ -8,6 +8,7 @@ import { TelehealthModal } from "@/components/modals/TelehealthModal";
 
 const doctors = [
   {
+    id: 1,
     name: "Dr. Sarah Chen",
     specialty: "Cardiologist",
     rating: 4.9,
@@ -15,8 +16,11 @@ const doctors = [
     experience: "15+ years",
     availability: "Available Today",
     image: "SC",
+    slots: ["09:00", "10:00", "14:00"],
+    online: true,
   },
   {
+    id: 2,
     name: "Dr. Michael Roberts",
     specialty: "Family Medicine",
     rating: 4.8,
@@ -24,8 +28,11 @@ const doctors = [
     experience: "12+ years",
     availability: "Available Tomorrow",
     image: "MR",
+    slots: ["08:30", "11:00", "15:30"],
+    online: false,
   },
   {
+    id: 3,
     name: "Dr. Priya Sharma",
     specialty: "Dermatologist",
     rating: 5.0,
@@ -33,8 +40,11 @@ const doctors = [
     experience: "10+ years",
     availability: "Available Today",
     image: "PS",
+    slots: ["09:30", "13:00", "16:00"],
+    online: true,
   },
   {
+    id: 4,
     name: "Dr. James Wilson",
     specialty: "Pediatrician",
     rating: 4.9,
@@ -42,6 +52,8 @@ const doctors = [
     experience: "18+ years",
     availability: "Available Today",
     image: "JW",
+    slots: ["10:00", "12:00", "14:30"],
+    online: true,
   },
 ];
 
@@ -187,14 +199,14 @@ export const DoctorsSection = () => {
       <BookingModal
         isOpen={bookingModalOpen}
         onClose={() => setBookingModalOpen(false)}
-        doctor={selectedDoctorForBooking}
+        preselectedDoctor={selectedDoctorForBooking}
       />
 
       {/* Telehealth Modal */}
       <TelehealthModal
         isOpen={telehealthModalOpen}
         onClose={() => setTelehealthModalOpen(false)}
-        doctor={selectedDoctorForTelehealth}
+        preselectedDoctor={selectedDoctorForTelehealth}
       />
     </section>
   );
