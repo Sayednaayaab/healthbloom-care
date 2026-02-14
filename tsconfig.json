@@ -11,6 +11,9 @@
     "skipLibCheck": true,
     "allowJs": true,
     "noUnusedLocals": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "types": ["jest", "@testing-library/jest-dom", "node"]
   }
 }
